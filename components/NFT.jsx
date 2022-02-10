@@ -69,39 +69,41 @@ const NFT = ({ chain, contractAddress }) => {
   useEffect(() => {
     console.log('sort=', sort)
     if (sort == 'Ascending') {
-      if (filter == '') {
-        let list = [...content]
-        list.sort((a, b) => {
-          let textA = a.name.toUpperCase().trim()
-          let textB = b.name.toUpperCase().trim()
-          return textA < textB ? -1 : textA > textB ? 1 : 0
-        })
-        setConten(list)
-      } else {
+      let list = [...content]
+      list.sort((a, b) => {
+        let textA = a.name.toUpperCase().trim()
+        let textB = b.name.toUpperCase().trim()
+        return textA < textB ? -1 : textA > textB ? 1 : 0
+      })
+      setConten(list)
+
+      if (filter != '') {
         let list = [...nftdata]
         list.sort((a, b) => {
           let textA = a.name.toUpperCase().trim()
           let textB = b.name.toUpperCase().trim()
           return textA < textB ? -1 : textA > textB ? 1 : 0
         })
+
         setnftdata(list)
       }
     } else if (sort == 'Descending') {
-      if (filter == '') {
-        let list = [...content]
-        list.sort((a, b) => {
-          let textA = a.name.toUpperCase()
-          let textB = b.name.toUpperCase()
-          return !(textA < textB) ? -1 : !(textA > textB) ? 1 : 0
-        })
-        setConten(list)
-      } else {
+      let list = [...content]
+      list.sort((a, b) => {
+        let textA = a.name.toUpperCase()
+        let textB = b.name.toUpperCase()
+        return !(textA < textB) ? -1 : !(textA > textB) ? 1 : 0
+      })
+      setConten(list)
+
+      if (filter != '') {
         let list = [...nftdata]
         list.sort((a, b) => {
           let textA = a.name.toUpperCase()
           let textB = b.name.toUpperCase()
           return !(textA < textB) ? -1 : !(textA > textB) ? 1 : 0
         })
+
         setnftdata(list)
       }
     }
