@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
 body{
     background: linear-gradient(to right, rgb(165, 180, 252), rgb(192, 132, 252));
+    font-family: 'Ubuntu', sans-serif;
+    font-size: xx-large;
 }

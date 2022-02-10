@@ -2,96 +2,129 @@ import { useState, useEffect } from 'react'
 import { useNFTBalances } from 'react-moralis'
 import Card from '../components/Card'
 import Options from '../components/Options'
-const NFTBalances = ({ chain, contractAddress, content, setContent }) => {
-  const { getNFTBalances, data, error, isLoading, isFetching } =
-    useNFTBalances()
+
+async function f(nft) {
+  try {
+    const res = await fetch(`${nft.token_uri}`)
+    const data = await res.json()
+
+    return {
+      name: data.name,
+      image: nft.image ? nft.image : data.image,
+      contract_type: nft.contract_type,
+      amount: nft.amount,
+      symbol: nft.symbol,
+    }
+  } catch (e) {
+    return { name: null, image: null }
+  }
+}
+
+const NFT = ({ chain, contractAddress }) => {
+  const [content, setConten] = useState([])
   const [nftdata, setnftdata] = useState([])
   const [sort, setSort] = useState('')
   const [filter, setFilter] = useState('')
+  const { getNFTBalances, data, error, isLoading, isFetching } =
+    useNFTBalances()
   useEffect(() => {
-    getNFTBalances({
-      params: { chain: chain, address: contractAddress, limit: 100 },
-    })
-    setContent([])
-    setnftdata([])
-    data?.result.map((nft, id) => {
-      const a = f(nft)
-      a.then(({ name, image, contract_type, amount, symbol }) => {
-        if (image) {
-          setContent((prev) => [
-            ...prev,
-            {
+    if (chain != '' && contractAddress != '') {
+      console.log(`chain= ${chain} add: ${contractAddress.trim()}`)
+      // clearing radio buttons checked
+      let radiobtn = document.querySelectorAll('.radio')
+      radiobtn.forEach((element) => {
+        element.checked = false
+      })
+      // calling moralis api for geting nft data
+      getNFTBalances({
+        params: { chain: chain, address: contractAddress, limit: 100 },
+      })
+
+      let list = []
+      data?.result.map((nft, id) => {
+        const a = f(nft)
+        a.then(({ name, image, contract_type, amount, symbol }) => {
+          if (name) {
+            list.push({
               name: name,
               image: image,
               contract_type: contract_type,
               amount: amount,
               symbol: symbol,
-            },
-          ])
-          setnftdata(content)
-        }
+            })
+          }
+        })
       })
-    })
+      setConten(list)
+    }
+    else{
+      setConten([])
+      setnftdata([])
+    }
   }, [chain, contractAddress])
 
   useEffect(() => {
-    if (sort == 'Descending') {
-      setnftdata((prev) => {
-        return prev.sort((a, b) => {
-          let textA = a.name.toUpperCase().trim()
-          let textB = b.name.toUpperCase().trim()
-          return textA < textB ? -1 : textA > textB ? 1 : 0
-        })
+    console.log('nft data: ', nftdata)
+  }, [nftdata])
+
+  useEffect(() => {
+    console.log('sort=', sort)
+    if (sort == 'Ascending') {
+      let list = [...content]
+      list.sort((a, b) => {
+        let textA = a.name.toUpperCase().trim()
+        let textB = b.name.toUpperCase().trim()
+        return textA < textB ? -1 : textA > textB ? 1 : 0
       })
-    } else if (sort == 'Ascending') {
-      setnftdata((prev) => {
-        return prev.sort((a, b) => {
-          let textA = a.name.toUpperCase()
-          let textB = b.name.toUpperCase()
-          return !(textA < textB) ? -1 : !(textA > textB) ? 1 : 0
-        })
+      setConten(list)
+    } else if (sort == 'Descending') {
+      let list = [...content]
+      list.sort((a, b) => {
+        let textA = a.name.toUpperCase()
+        let textB = b.name.toUpperCase()
+        return !(textA < textB) ? -1 : !(textA > textB) ? 1 : 0
       })
+      setConten(list)
     }
   }, [sort])
 
   useEffect(() => {
     if (filter == 'ERC721') {
+      let list = [...content]
       setnftdata((prev) => {
-        return content.filter((a) => a.contract_type == 'ERC721')
+        return list.filter((a) => a.contract_type == 'ERC721')
       })
     } else if (filter == 'ERC1155') {
+      let list = [...content]
       setnftdata((prev) => {
-        return content.filter((a) => a.contract_type == 'ERC1155')
+        return list.filter((a) => a.contract_type == 'ERC1155')
       })
+    } else {
+      setnftdata([])
     }
   }, [filter])
 
-  async function f(nft) {
-    try {
-      const res = await fetch(`${nft.token_uri}`)
-      const data = await res.json()
-      return {
-        name: data.name,
-        image: data.image,
-        contract_type: nft.contract_type,
-        amount: nft.amount,
-        symbol: nft.symbol,
-      }
-    } catch (e) {
-      return { name: null, image: null }
-    }
-  }
+  useEffect(() => {
+    console.log('content =', content)
+  }, [content])
+
   return (
-    // {isLoading ? (<h1>Loading</h1>) : (<h1>Done</h1>)}
     <>
       <Options setSort={setSort} setFilter={setFilter} />
-
+      {isFetching ? <h1>Loading</h1> : ''}
+      <button
+        onClick={() => {
+          console.log(content)
+        }}
+      >
+        clickccc
+      </button>
       <div className="flex flex-wrap justify-center gap-10">
-        {error && <>{JSON.stringify(error)}</>}
-        {nftdata.length > 0 &&
-          nftdata.map((nft, id) => <Card content={nftdata[id]} />)}
+        {filter == 'ERC721' || filter == 'ERC1155'
+          ? nftdata.map((nft, id) => <Card content={nft} />)
+          : content.map((nft, id) => <Card content={nft} />)}
       </div>
     </>
   )
 }
-export default NFTBalances
+export default NFT

@@ -1,34 +1,60 @@
-const Options = ({setSort,setFilter}) => {
+const Options = ({ setSort, setFilter }) => {
   return (
     <div className="flex justify-around px-10 py-8 ">
-    <div>
-      <label>SORT NFT LIST BY:</label>
-      <select
-        className="flex cursor-pointer items-center rounded-lg bg-white px-4 py-4 shadow-xl "
-        onChange={(e) => setSort(e.target.value)}
-      >
-        <option selected="true" disabled="disabled">
-          ORDER
-        </option>
-        <option value="Ascending">Asending</option>
-        <option value="Descending">Desending</option>
-      </select>
-    </div>
-    <div>
-      <label>FILTER NFT LIST BY:</label>
-      <select
-        className="flex cursor-pointer items-center rounded-lg bg-white px-4 py-4 shadow-xl "
-        onChange={(e) => setFilter(e.target.value)}
-      >
-        <option selected="true" disabled="disabled">
-          FILTER
-        </option>
-        <option value="ERC721">ERC 721</option>
-        <option value="ERC1155">ERC 1155</option>
-      </select>
-    </div>
-  </div>
-  )
-};
+      <div>
+        <label>SORT NFT LIST BY:</label>
+        <label htmlFor="Ascending">Ascending</label>
+        <input
+          className="radio"
+          id="Ascending"
+          type="radio"
+          name="sort"
+          onChange={(e) => setSort(e.target.value.trim())}
+          value="Ascending"
+        />{' '}
+        <label htmlFor="Descending">Descending</label>
+        <input
+          className="radio"
+          id="Descending"
+          name="sort"
+          type="radio"
+          onChange={(e) => setSort(e.target.value.trim())}
+          value="Descending"
+        />
+      </div>
+      <div>
+        <label>FILTER NFT LIST BY:</label>
 
-export default Options;
+        <label htmlFor="ERC721">ERC721</label>
+        <input
+          className="radio"
+          id="ERC721"
+          type="radio"
+          name="filter"
+          onChange={(e) => setFilter(e.target.value)}
+          value="ERC721"
+        />
+        <label htmlFor="ERC1155">ERC1155</label>
+        <input
+          id="ERC1155"
+          name="filter"
+          className="radio"
+          type="radio"
+          onChange={(e) => setFilter(e.target.value)}
+          value="ERC1155"
+        />
+        <label htmlFor="BOTH">BOTH</label>
+        <input
+          name="filter"
+          id="BOTH"
+          className="radio"
+          type="radio"
+          onChange={(e) => setFilter('')}
+          value="BOTH"
+        />
+      </div>
+    </div>
+  )
+}
+
+export default Options
