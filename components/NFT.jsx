@@ -56,8 +56,7 @@ const NFT = ({ chain, contractAddress }) => {
         })
       })
       setConten(list)
-    }
-    else{
+    } else {
       setConten([])
       setnftdata([])
     }
@@ -70,21 +69,41 @@ const NFT = ({ chain, contractAddress }) => {
   useEffect(() => {
     console.log('sort=', sort)
     if (sort == 'Ascending') {
-      let list = [...content]
-      list.sort((a, b) => {
-        let textA = a.name.toUpperCase().trim()
-        let textB = b.name.toUpperCase().trim()
-        return textA < textB ? -1 : textA > textB ? 1 : 0
-      })
-      setConten(list)
+      if (filter == '') {
+        let list = [...content]
+        list.sort((a, b) => {
+          let textA = a.name.toUpperCase().trim()
+          let textB = b.name.toUpperCase().trim()
+          return textA < textB ? -1 : textA > textB ? 1 : 0
+        })
+        setConten(list)
+      } else {
+        let list = [...nftdata]
+        list.sort((a, b) => {
+          let textA = a.name.toUpperCase().trim()
+          let textB = b.name.toUpperCase().trim()
+          return textA < textB ? -1 : textA > textB ? 1 : 0
+        })
+        setnftdata(list)
+      }
     } else if (sort == 'Descending') {
-      let list = [...content]
-      list.sort((a, b) => {
-        let textA = a.name.toUpperCase()
-        let textB = b.name.toUpperCase()
-        return !(textA < textB) ? -1 : !(textA > textB) ? 1 : 0
-      })
-      setConten(list)
+      if (filter == '') {
+        let list = [...content]
+        list.sort((a, b) => {
+          let textA = a.name.toUpperCase()
+          let textB = b.name.toUpperCase()
+          return !(textA < textB) ? -1 : !(textA > textB) ? 1 : 0
+        })
+        setConten(list)
+      } else {
+        let list = [...nftdata]
+        list.sort((a, b) => {
+          let textA = a.name.toUpperCase()
+          let textB = b.name.toUpperCase()
+          return !(textA < textB) ? -1 : !(textA > textB) ? 1 : 0
+        })
+        setnftdata(list)
+      }
     }
   }, [sort])
 
@@ -111,14 +130,11 @@ const NFT = ({ chain, contractAddress }) => {
   return (
     <>
       <Options setSort={setSort} setFilter={setFilter} />
-      {isFetching ? <h1>Loading</h1> : ''}
-      <button
-        onClick={() => {
-          console.log(content)
-        }}
-      >
-        clickccc
-      </button>
+      {isFetching && (
+        <h1 className=" m-4 p-4  text-center text-3xl font-bold  text-rose-500">
+          Loading
+        </h1>
+      )}
       <div className="flex flex-wrap justify-center gap-10">
         {filter == 'ERC721' || filter == 'ERC1155'
           ? nftdata.map((nft, id) => <Card content={nft} />)
